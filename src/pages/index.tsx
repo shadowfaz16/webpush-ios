@@ -174,6 +174,8 @@ const Notifs = () => {
     }, 12000);
 
 
+
+
     const handleNotification = (blockNumber: string) => {
         Notification.requestPermission().then((permission) => {
             if (permission === "granted") {
@@ -261,6 +263,16 @@ const Notifs = () => {
             setPrevBalances(newBalances);
         }
     }, [balanceEth, balanceMatic, balanceArbitrum, balanceSepolia, balanceScroll, account, prevBalances]);
+
+    const fetchBalances = useCallback(async () => {
+        balanceEth.refetch();
+        balanceMatic.refetch();
+        balanceArbitrum.refetch();
+        balanceSepolia.refetch();
+        balanceScroll.refetch();
+    }, [balanceEth, balanceMatic, balanceArbitrum, balanceSepolia, balanceScroll]);
+
+    useInterval(fetchBalances, 10000); // 10000 ms = 10 seco
 
     const floatAnimation = {
         animate: {
@@ -434,6 +446,7 @@ const Notifs = () => {
                     </Flex>
 
                     <Flex flexDirection="column" alignItems="center" gap={4} mt={-28}>
+                        <h3>{balanceSepolia.data?.formatted}</h3>np
                         <motion.img
                             {...floatAnimation}
                             src="/static/eth-symbol.webp"
@@ -450,6 +463,7 @@ const Notifs = () => {
                         />
                     </Flex>
                     <Flex flexDirection="column" alignItems="center" gap={4} mt={-40}>
+                        <h3>{balanceScroll.data?.formatted}</h3>np
                         <motion.img
                             {...floatAnimation}
                             src="/static/scroll-symbol.webp"
