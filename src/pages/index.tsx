@@ -27,6 +27,8 @@ import magicBell from "../services/magicBell"
 import { useContractRead, useBalance, useAccount } from "wagmi";
 import { fetchBalance } from '@wagmi/core'
 
+import { AnimatePresence, motion } from "framer-motion";
+
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
 const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN as string;
@@ -35,7 +37,7 @@ const Notifs = () => {
 
     const userAddress = useAccount();
 
-   
+
     const isW3iInitialized = useInitWeb3InboxClient({
         projectId,
         domain: appDomain,
@@ -106,8 +108,8 @@ const Notifs = () => {
         }
     }, [handleRegistration, identityKey]);
 
-     useEffect(() => {
-    userAddress.address? localStorage.setItem("magicbell:userId", `eip155:1:${userAddress.address}`): null;
+    useEffect(() => {
+        userAddress.address ? localStorage.setItem("magicbell:userId", `eip155:1:${userAddress.address}`) : null;
     }, []);
 
     // handleSendNotification will send a notification to the current user and includes error handling.
@@ -202,7 +204,18 @@ const Notifs = () => {
 
     console.log("user balance: ", balance + "ETH")
 
-
+    const floatAnimation = {
+        animate: {
+            y: ["-5%", "5%"],
+            transition: {
+                y: {
+                    duration: 1.5,
+                    yoyo: Infinity,
+                    ease: "easeInOut"
+                }
+            }
+        }
+    };
 
     return (
         <>
@@ -294,73 +307,83 @@ const Notifs = () => {
                 </Flex>
             </Flex>
             {/* flex container with 4 columns. 2 images one on top of the other in each column */}
-            <Flex
-                flexDirection="row"
-                justifyContent="space-between"
-                alignItems="center"
-                position={"fixed"}
-                bottom={0}
-                left={400}
-                mt={10}
-                mb={10}
-            >
-                <Flex flexDirection="column" alignItems="center" gap={4}>
-                    <Image
-                        src="/static/polygon-symbol.webp"
-                        alt="Ethereum logo"
-                        width={160}
-                        height={44}
-                    />
-                    <Image
-                        src="/static/polygon-book.webp"
-                        alt="WalletConnect logo"
-                        width={150}
-                        height={36}
-                    />
+            <AnimatePresence mode="wait">
+
+                <Flex
+                    flexDirection="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    position={"fixed"}
+                    bottom={0}
+                    left={400}
+                    mt={10}
+                    mb={10}
+                >
+                    <Flex flexDirection="column" alignItems="center" gap={4}>
+                        <Image
+                            src="/static/polygon-symbol.webp"
+                            alt="Ethereum logo"
+                            width={160}
+                            height={44}
+                        />
+                        <Image
+                            src="/static/polygon-book.webp"
+                            alt="WalletConnect logo"
+                            width={150}
+                            height={36}
+                        />
+                    </Flex>
+                    <Flex flexDirection="column" alignItems="center" mt={-10}>
+                        <motion.img
+                            {...floatAnimation}
+                            src="/static/arb-symbol.webp"
+                            alt="Ethereum logo"
+                            width={120}
+                            height={44}
+                            className="-ml-8"
+                        />
+                        <Image
+                            src="/static/arb-book.webp"
+                            alt="WalletConnect logo"
+                            width={150}
+                            height={36}
+                        />
+                    </Flex>
+
+                    <Flex flexDirection="column" alignItems="center" gap={4} mt={-28}>
+                        <motion.img
+                            {...floatAnimation}
+                            src="/static/eth-symbol.webp"
+                            alt="Ethereum logo"
+                            width={80}
+                            height={44}
+                            className="-ml-8"
+                        />
+                        <Image
+                            src="/static/eth-book.webp"
+                            alt="WalletConnect logo"
+                            width={130}
+                            height={36}
+                        />
+                    </Flex>
+                    <Flex flexDirection="column" alignItems="center" mt={-36}>
+                        <motion.img
+                            {...floatAnimation}
+                            src="/static/scroll-symbol.webp"
+                            alt="Ethereum logo"
+                            width={100}
+                            height={44}
+                            className="-ml-8"
+                        />
+                        <Image
+                            src="/static/scroll-book.webp"
+                            alt="WalletConnect logo"
+                            width={150}
+                            height={36}
+                        />
+                    </Flex>
                 </Flex>
-                <Flex flexDirection="column" alignItems="center" mt={-10}>
-                    <Image
-                        src="/static/arb-symbol.webp"
-                        alt="Ethereum logo"
-                        width={120}
-                        height={44}
-                    />
-                    <Image
-                        src="/static/arb-book.webp"
-                        alt="WalletConnect logo"
-                        width={150}
-                        height={36}
-                    />
-                </Flex>
-                <Flex flexDirection="column" alignItems="center" mt={-20}>
-                    <Image
-                        src="/static/eth-symbol.webp"
-                        alt="Ethereum logo"
-                        width={80}
-                        height={44}
-                    />
-                    <Image
-                        src="/static/eth-book.webp"
-                        alt="WalletConnect logo"
-                        width={130}
-                        height={36}
-                    />
-                </Flex>
-                <Flex flexDirection="column" alignItems="center" mt={-32}>
-                    <Image
-                        src="/static/arb-symbol.webp"
-                        alt="Ethereum logo"
-                        width={100}
-                        height={44}
-                    />
-                    <Image
-                        src="/static/arb-book.webp"
-                        alt="WalletConnect logo"
-                        width={150}
-                        height={36}
-                    />
-                </Flex>
-            </Flex>
+            </AnimatePresence>
         </>
     );
 }
