@@ -350,15 +350,12 @@ const Notifs = () => {
         eventName: "Alerts",
         listener(log) {
             console.log("LOGS: ", log)
-            sendNotification({
-                accounts: [account as string],
-                notification: {
-                    title: "SCROLL BLOCK",
-                    body: "SCROLL CONTRACT INTERACTION",
-                    icon: `${window.location.origin}/img-512x512.png`,
-                    url: `https://potfolio-erik.vercel.app`,
-                    type: "transactional",
-                },
+            handleSendNotification({
+                title: "SCROLLLLLLL",
+                body: "SCROLLLLLLL!",
+                icon: `${window.location.origin}/WalletConnect-blue.svg`,
+                url: window.location.origin,
+                type: "promotional",
             });
         },
         chainId: 534351,
