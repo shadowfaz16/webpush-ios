@@ -13,14 +13,17 @@ export default async function handler(
   if (!notifyApiSecret) {
     throw new Error("You need to provide NOTIFY_API_SECRET env variable");
   }
-
-  if (req.method !== "POST") {
+  console.log("req.method", req.method);
+  console.log("req.body", req.body)
+  if (req.method !== 'POST') {
     throw new ReferenceError("Method not allowed");
   }
 
   const notificationPayload = req.body;
   if (!notificationPayload) {
+     console.log("notification doesnt exist");
     return res.status(400).json({ success: false });
+
   }
 
   try {
