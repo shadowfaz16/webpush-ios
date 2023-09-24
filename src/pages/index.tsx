@@ -320,6 +320,7 @@ const Notifs = () => {
 
 
     const handleSubscribe = async () => {
+        subscribe();
         try {
             setState({ status: "busy" })
             await subscriptionManager.subscribe(
@@ -327,7 +328,6 @@ const Notifs = () => {
                 subscribeOptions
             )
             setState({ status: "success" })
-            subscribe();
         } catch (error: any) {
             setState({ status: "error", error: error.message })
         }
@@ -416,8 +416,8 @@ const Notifs = () => {
 
                     {isSubscribed && (
                         <div className="absolute top-80 left-20 justify-center items-center w-full">
-                            <div className="h-44 border-2 rounded-lg shadow-sm border-gray-400 w-1/3 relative overflow-y-scroll max-w-full">
-                                <Accordion allowToggle>
+                            <div className="h-44 border-2 rounded-lg shadow-sm border-gray-400 w-1/3 relative overflow-y-scroll ">
+                                <Accordion defaultIndex={[1]} allowToggle mt={10} rounded="xl">
                                     <Messages />
                                 </Accordion>
                             </div>
