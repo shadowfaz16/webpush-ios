@@ -379,7 +379,9 @@ const Notifs = () => {
                     {isSubscribed && (
                         <div className="absolute top-80 left-20 justify-center items-center w-full">
                             <div className="h-44 border-2 rounded-lg shadow-sm border-gray-400 w-1/3 relative overflow-y-scroll max-w-full">
-                                <Messages />
+                                <Accordion allowToggle>
+                                    <Messages />
+                                </Accordion>
                             </div>
                         </div>
                     )}
