@@ -137,6 +137,7 @@ const Notifs = () => {
                             type: "transactional",
                         },
                     });
+                    await magicBell.sendNotification("hn_random");
                 } catch (error: any) {
                     toast({
                         title: "Failed to send new block notification",
