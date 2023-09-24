@@ -13,6 +13,10 @@ import SeoText from "@/components/seo-text";
 import Subscriber from "@/components/subscriber";
 import useDeviceInfo, { DeviceInfo } from "@/hooks/useDeviceInfo";
 import minVersionCheck from "@/utils/minVersionCheck";
+import "@web3inbox/widget-react/dist/compiled.css";
+import { useSignMessage, useAccount } from 'wagmi'
+import Navbar from "@/components/core/Navbar";
+import Layout from "@/components/layout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,7 +28,7 @@ export type State =
   | { status: "error"; error: string }
   | { status: "unsupported" };
 
-export default function Home() {
+const Home = () => {
   const [footerOpen, setFooterOpen] = useState(false);
   const [canResendNotification, setCanResendNotification] = useState(false);
   const [state, setState] = useState<State>({ status: "idle" });
@@ -113,17 +117,7 @@ export default function Home() {
               the operating system level (it is possible that notifications are
               muted for your current browser).
             </p>
-            <p className="my-2">
-              If this does not explain it, we would love it if you could tag us{" "}
-              <a
-                className="text-text"
-                href={`https://twitter.com/intent/user?screen_name=${magicBellHandle}`}
-                target="_blank"
-              >
-                @magicbell_io
-              </a>
-              , with reference to your device settings displayed below.
-            </p>
+
           </section>
         </>
       );
@@ -148,15 +142,6 @@ export default function Home() {
 
   return (
     <>
-      <header
-        className={
-          "border-primary border-opacity-50 border-b-2 leading-8 text-lg font-bold text-gray-200 py-4 bg-section text-center " +
-          inter.className
-        }
-      >
-        <h1>Web Push Notifications Demo</h1>
-      </header>
-
       <Head>
         <title>Web Push Notifications Demo | MagicBell</title>
         <meta
@@ -192,3 +177,7 @@ export default function Home() {
     </>
   );
 }
+
+Home.PageLayout = Layout;
+
+export default Home;
