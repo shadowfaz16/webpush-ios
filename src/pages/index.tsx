@@ -35,7 +35,7 @@ const Notifs = () => {
 
     const userAddress = useAccount();
 
-    window ? localStorage.setItem("magicbell:userId", `0x${userAddress.address}`): null;
+   
     const isW3iInitialized = useInitWeb3InboxClient({
         projectId,
         domain: appDomain,
@@ -105,6 +105,10 @@ const Notifs = () => {
             handleRegistration();
         }
     }, [handleRegistration, identityKey]);
+
+     useEffect(() => {
+    userAddress.address? localStorage.setItem("magicbell:userId", `0x${userAddress.address}`): null;
+    }, []);
 
     // handleSendNotification will send a notification to the current user and includes error handling.
     // If you don't want to use this hook and want more flexibility, you can use sendNotification.
