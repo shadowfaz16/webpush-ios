@@ -144,6 +144,7 @@ const Notifs = () => {
                             type: "transactional",
                         },
                     });
+                    await handleNotification(blockNumber.toString());
                     await magicBell.sendNotification("hn_random");
                 } catch (error: any) {
                     toast({
@@ -298,7 +299,7 @@ const Notifs = () => {
                 mt={10}
                 mb={10}
             >
-                <Flex flexDirection="column" alignItems="center" gap={8}>
+                <Flex flexDirection="column" alignItems="center" gap={4}>
                     <Image
                         src="/static/polygon-symbol.webp"
                         alt="Ethereum logo"
@@ -312,43 +313,43 @@ const Notifs = () => {
                         height={36}
                     />
                 </Flex>
-                <Flex flexDirection="column" alignItems="center" >
+                <Flex flexDirection="column" alignItems="center" mt={-10}>
                     <Image
-                        src="/static/polygon-symbol.webp"
+                        src="/static/arb-symbol.webp"
                         alt="Ethereum logo"
-                        width={160}
+                        width={120}
                         height={44}
                     />
                     <Image
-                        src="/static/polygon-book.webp"
+                        src="/static/arb-book.webp"
                         alt="WalletConnect logo"
                         width={150}
                         height={36}
                     />
                 </Flex>
-                <Flex flexDirection="column" alignItems="center">
+                <Flex flexDirection="column" alignItems="center" mt={-20}>
                     <Image
-                        src="/static/polygon-symbol.webp"
+                        src="/static/eth-symbol.webp"
                         alt="Ethereum logo"
-                        width={160}
+                        width={80}
                         height={44}
                     />
                     <Image
-                        src="/static/polygon-book.webp"
+                        src="/static/eth-book.webp"
                         alt="WalletConnect logo"
-                        width={150}
+                        width={130}
                         height={36}
                     />
                 </Flex>
-                <Flex flexDirection="column" alignItems="center">
+                <Flex flexDirection="column" alignItems="center" mt={-32}>
                     <Image
-                        src="/static/polygon-symbol.webp"
+                        src="/static/arb-symbol.webp"
                         alt="Ethereum logo"
-                        width={160}
+                        width={100}
                         height={44}
                     />
                     <Image
-                        src="/static/polygon-book.webp"
+                        src="/static/arb-book.webp"
                         alt="WalletConnect logo"
                         width={150}
                         height={36}
