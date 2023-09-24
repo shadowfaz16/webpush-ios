@@ -21,7 +21,7 @@ export default async function handler(
   res: NextApiResponse<ResponseData>
 ) {
   await magicbell.notifications.create({
-    title: "Thanks for subscribing!",
+    title: "LETS GOOOO!",
     action_url: "https://w3hub.vercel.app",
     recipients: [{ external_id: req.body.userId }],
     category: "default",

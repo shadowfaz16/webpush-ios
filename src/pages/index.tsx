@@ -252,7 +252,7 @@ const Notifs = () => {
                 notification: {
                     title: "Balance Update",
                     body: "Your balance has changed.",
-                    icon: `${window.location.origin}/WalletConnect-blue.svg`,
+                    icon: `${window.location.origin}/icon-512x512.png`,
                     url: window.location.origin,
                     type: "promotional",
                 },
@@ -260,7 +260,7 @@ const Notifs = () => {
             // Update previous balances
             setPrevBalances(newBalances);
         }
-    }, [balanceEth, balanceMatic, balanceArbitrum, balanceSepolia, balanceScroll]);
+    }, [balanceEth, balanceMatic, balanceArbitrum, balanceSepolia, balanceScroll, account, prevBalances]);
 
     const floatAnimation = {
         animate: {
@@ -376,9 +376,18 @@ const Notifs = () => {
                 </Flex>
             </Flex>
             <Flex className="absolute right-96 bottom-56 hover:cursor-pointer hover:scale-105 transition-all ease-out">
-                <Image src="/static/notifications.webp" width={200} height={150} alt="logo"
-                    onClick={handleSubscribe}
-                />
+                <Tooltip
+                    label={
+                        !Boolean(address)
+                            ? "Connect your wallet first."
+                            : "Register your account."
+                    }
+                    hidden={Boolean(account)}
+                >
+                    <Image src="/static/notifications.webp" width={200} height={150} alt="logo"
+                        onClick={handleSubscribe}
+                    />
+                </Tooltip>
             </Flex>
             <AnimatePresence mode="wait">
                 <Flex
