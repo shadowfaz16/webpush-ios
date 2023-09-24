@@ -357,7 +357,7 @@ const Notifs = () => {
     })
 
     useEffect(() => {
-        if (event) {
+        if (event && event.result) {
             sendNotification({
                 accounts: [account as string],
                 notification: {
