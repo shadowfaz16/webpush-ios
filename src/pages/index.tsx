@@ -1,12 +1,14 @@
 "use client";
 import type { NextPage } from "next";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
     useInitWeb3InboxClient,
     useManageSubscription,
     useW3iAccount,
 } from "@web3inbox/widget-react";
 import "@web3inbox/widget-react/dist/compiled.css";
+import subscriptionManager from "@/services/subscriptionManager"
+import { useConfig, clientSettings } from "@magicbell/react-headless"
 
 import { usePublicClient, useSignMessage } from "wagmi";
 import { FaBell, FaBellSlash, FaPause, FaPlay } from "react-icons/fa";
@@ -32,7 +34,15 @@ import { AnimatePresence, motion } from "framer-motion";
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
 const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN as string;
 
+export type State =
+    | { status: "idle" | "busy" | "success" }
+    | { status: "error"; error: string }
+    | { status: "unsupported" };
+
 const Notifs = () => {
+
+    const [state, setState] = useState<State>({ status: "idle" });
+
 
     const userAddress = useAccount();
 
@@ -172,8 +182,22 @@ const Notifs = () => {
     useInterval(() => {
         handleBlockNotification();
     }, 12000);
+    const config = useConfig()
 
 
+    const subscribeOptions = useMemo(() => {
+        const host = "https://api.magicbell.com"
+        try {
+            const url = new URL(config.channels?.webPush.config.subscribeUrl || "")
+            return {
+                token: url.searchParams.get("access_token") || "",
+                project: url.searchParams.get("project") || "",
+                host,
+            }
+        } catch (e) {
+            return { token: "", project: "", host }
+        }
+    }, [config])
 
 
     const handleNotification = (blockNumber: string) => {
@@ -287,18 +311,31 @@ const Notifs = () => {
         }
     };
 
-    const handleSubscribe = () => {
-        // subscribe and send a welcome notification from magibell
-        subscribe();
-        magicBell.sendNotification("welcome");
+    // const handleSubscribe = () => {
+    //     // subscribe and send a welcome notification from magibell
+    //     subscribe();
+    //     magicBell.sendNotification("welcome");
+    // }
+
+    const handleSubscribe = async () => {
+        try {
+            setState({ status: "busy" })
+            await subscriptionManager.subscribe(
+                clientSettings.getState().userExternalId as string, // TODO: fix typing here
+                subscribeOptions
+            )
+            setState({ status: "success" })
+            subscribe();
+            magicBell.sendNotification("welcome");
+        } catch (error: any) {
+            setState({ status: "error", error: error.message })
+        }
     }
+
 
     return (
         <>
             <Flex w="full" flexDirection={"column"} maxW="700px" mt={4}>
-                <Heading alignSelf={"center"} textAlign={"center"} mb={6} fontSize={20}>
-                    Blockchain notifications
-                </Heading>
                 {/* fix flex with iamage */}
                 <Flex flexDirection="column" alignItems={"center"} padding={4} position='absolute' top={75} left={200}>
                     <Image src="/wallethublogo.webp" width={150} height={150} alt="logo" />
@@ -362,7 +399,7 @@ const Notifs = () => {
                         >
                             <Button
                                 leftIcon={<FaBell />}
-                                onClick={subscribe}
+                                onClick={handleSubscribe}
                                 colorScheme="cyan"
                                 rounded="full"
                                 variant="outline"
@@ -378,12 +415,11 @@ const Notifs = () => {
                     )}
 
                     {isSubscribed && (
-                        <Accordion defaultIndex={[1]} allowToggle mt={10} rounded="xl">
-                            <Subscription />
-                            <Messages />
-                            <Preferences />
-                            <Subscribers />
-                        </Accordion>
+                        <div className="absolute top-80 left-20 justify-center items-center w-full">
+                            <div className="h-44 border-2 rounded-lg shadow-sm border-gray-400 w-1/3 relative overflow-y-scroll max-w-full">
+                                <Messages />
+                            </div>
+                        </div>
                     )}
                 </Flex>
             </Flex>
@@ -401,10 +437,11 @@ const Notifs = () => {
                     />
                 </Tooltip>
             </Flex>
+
             <AnimatePresence mode="wait">
                 <Flex
                     flexDirection="row"
-                    justifyContent="space-between"
+                    justifyContent="center"
                     alignItems="center"
                     position={"fixed"}
                     bottom={0}
@@ -413,6 +450,7 @@ const Notifs = () => {
                     mb={10}
                 >
                     <Flex flexDirection="column" alignItems="center" gap={4}>
+                        <h3>{parseFloat(balanceMatic.data?.formatted as string).toFixed(2)}</h3>
                         <motion.img
                             {...floatAnimation}
                             src="/static/polygon-logo.webp"
@@ -429,6 +467,7 @@ const Notifs = () => {
                         />
                     </Flex>
                     <Flex flexDirection="column" alignItems="center" gap={4} mt={-14}>
+                        <h3>{parseFloat(balanceArbitrum.data?.formatted as string).toFixed(2)}</h3>
                         <motion.img
                             {...floatAnimation}
                             src="/static/arb-symbol.webp"
@@ -444,9 +483,8 @@ const Notifs = () => {
                             height={36}
                         />
                     </Flex>
-
                     <Flex flexDirection="column" alignItems="center" gap={4} mt={-28}>
-                        <h3>{balanceSepolia.data?.formatted}</h3>np
+                        <h3>{parseFloat(balanceSepolia.data?.formatted as string).toFixed(2)}</h3>
                         <motion.img
                             {...floatAnimation}
                             src="/static/eth-symbol.webp"
@@ -463,7 +501,7 @@ const Notifs = () => {
                         />
                     </Flex>
                     <Flex flexDirection="column" alignItems="center" gap={4} mt={-40}>
-                        <h3>{balanceScroll.data?.formatted}</h3>np
+                        <h3>{parseFloat(balanceScroll.data?.formatted as string).toFixed(2)}</h3>
                         <motion.img
                             {...floatAnimation}
                             src="/static/scroll-symbol.webp"
