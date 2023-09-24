@@ -184,15 +184,13 @@ const Notifs = () => {
     }, 12000);
 
 
-
-
     const handleNotification = (blockNumber: string) => {
         Notification.requestPermission().then((permission) => {
             if (permission === "granted") {
                 const notification = new Notification(`New block: ${blockNumber}`, {
                     body: `Click to see the block on Etherscan`,
                     data: { block: `https://etherscan.io/block/${blockNumber}` },
-                    icon: `${window.location.origin}/icon-512x512.png`,
+                    icon: `${window.location.origin}/img-512x512.png`,
                 });
                 notification.onclick = function (event) {
                     event.preventDefault();
@@ -264,7 +262,7 @@ const Notifs = () => {
                 notification: {
                     title: "Balance Update",
                     body: "Your balance has changed.",
-                    icon: `${window.location.origin}/icon-512x512.png`,
+                    icon: `${window.location.origin}/img-512x512.png`,
                     url: window.location.origin,
                     type: "promotional",
                 },
