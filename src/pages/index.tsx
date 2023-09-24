@@ -1,14 +1,12 @@
 "use client";
 import type { NextPage } from "next";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     useInitWeb3InboxClient,
     useManageSubscription,
     useW3iAccount,
 } from "@web3inbox/widget-react";
 import "@web3inbox/widget-react/dist/compiled.css";
-import subscriptionManager from "@/services/subscriptionManager"
-import { useConfig, clientSettings } from "@magicbell/react-headless"
 
 import { usePublicClient, useSignMessage } from "wagmi";
 import { FaBell, FaBellSlash, FaPause, FaPlay } from "react-icons/fa";
@@ -34,15 +32,7 @@ import { AnimatePresence, motion } from "framer-motion";
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
 const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN as string;
 
-export type State =
-    | { status: "idle" | "busy" | "success" }
-    | { status: "error"; error: string }
-    | { status: "unsupported" };
-
 const Notifs = () => {
-
-    const [state, setState] = useState<State>({ status: "idle" });
-
 
     const userAddress = useAccount();
 
@@ -182,22 +172,8 @@ const Notifs = () => {
     useInterval(() => {
         handleBlockNotification();
     }, 12000);
-    const config = useConfig()
 
 
-    const subscribeOptions = useMemo(() => {
-        const host = "https://api.magicbell.com"
-        try {
-            const url = new URL(config.channels?.webPush.config.subscribeUrl || "")
-            return {
-                token: url.searchParams.get("access_token") || "",
-                project: url.searchParams.get("project") || "",
-                host,
-            }
-        } catch (e) {
-            return { token: "", project: "", host }
-        }
-    }, [config])
 
 
     const handleNotification = (blockNumber: string) => {
@@ -311,26 +287,12 @@ const Notifs = () => {
         }
     };
 
-    // const handleSubscribe = () => {
-    //     // subscribe and send a welcome notification from magibell
-    //     subscribe();
-    //     magicBell.sendNotification("welcome");
-    // }
-
-    const handleSubscribe = async () => {
-        try {
-            setState({ status: "busy" })
-            await subscriptionManager.subscribe(
-                clientSettings.getState().userExternalId as string, // TODO: fix typing here
-                subscribeOptions
-            )
-            setState({ status: "success" })
-            subscribe();
-            magicBell.sendNotification("welcome");
-        } catch (error: any) {
-            setState({ status: "error", error: error.message })
-        }
+    const handleSubscribe = () => {
+        // subscribe and send a welcome notification from magibell
+        subscribe();
+        magicBell.sendNotification("welcome");
     }
+
 
 
     return (
@@ -399,7 +361,7 @@ const Notifs = () => {
                         >
                             <Button
                                 leftIcon={<FaBell />}
-                                onClick={handleSubscribe}
+                                onClick={subscribe}
                                 colorScheme="cyan"
                                 rounded="full"
                                 variant="outline"
