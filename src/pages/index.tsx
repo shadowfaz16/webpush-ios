@@ -29,6 +29,7 @@ import { useContractRead, useBalance, useAccount } from "wagmi";
 import { AnimatePresence, motion } from "framer-motion";
 import subscriptionManager from "@/services/subscriptionManager";
 import { clientSettings, useConfig } from "@magicbell/react-headless";
+import Link from "next/link";
 
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
@@ -415,7 +416,7 @@ const Notifs = () => {
                     )}
                 </Flex>
             </Flex>
-            <Flex className="absolute left-4 md:right-96 md:bottom-56 hover:cursor-pointer hover:scale-105 transition-all ease-out">
+            <Flex className="absolute left-4 md:left-auto md:right-96 md:bottom-56 hover:cursor-pointer hover:scale-105 transition-all ease-out">
                 <Tooltip
                     label={
                         !Boolean(address)
@@ -429,7 +430,11 @@ const Notifs = () => {
                     />
                 </Tooltip>
             </Flex>
-
+            <div className="absolute bottom-80 left-10 md:left-auto md:right-40 md:bottom-[22vw]">
+                <Link href="https://monaverse.com/spaces/fallen-giant" target="_blank" className="hover:cursor-pointer">
+                    <Image src="/static/mona.webp" width={120} height={150} alt="logo" />
+                </Link>
+            </div>
             <AnimatePresence mode="wait">
                 <Flex
                     flexDirection="row"
