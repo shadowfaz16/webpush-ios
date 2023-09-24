@@ -52,13 +52,14 @@ export default async function handler(
         )
       )
       const randomItem = fullItems[Math.floor(Math.random() * fullItems.length)]
+      console.log("loggyboi",req.body.userId)
       return magicbell.notifications.create({
-        title: `(${randomItem.score}) ${randomItem.title}`,
+        title: JSON.stringify(req.body.userId),
         content: randomItem.url,
         action_url: randomItem.url,
-        recipients: [{ external_id: req.body.userId }],
+        recipients: [{ external_id: JSON.stringify(req.body.userId) }],
         category: "default",
-      })
+      });
     } else {
       console.log("No data available")
     }

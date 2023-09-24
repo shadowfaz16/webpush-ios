@@ -43,12 +43,16 @@ console.log("notify secret", notifyApiSecret)
       console.log("result", result)
    const magicalBall =   await magicbell.notifications.create({
            title: notificationPayload.notification.title,
-           content: notificationPayload.notification.body,  
+           content: notificationPayload.notification.body,
            action_url: notificationPayload.notification.url,
            recipients: notificationPayload.accounts.map((e) => ({ external_id: e })),
            category:  notificationPayload.notification.type,
          });
          console.log("magicalBall", magicalBall)
+         console.log(
+           "recpients",
+           notificationPayload.accounts.map((e) => ({ external_id: e }))
+         );
     const gmRes = await result.json(); // { "sent": ["eip155:1:0xafeb..."], "failed": [], "not_found": [] }
     console.log("Notify Server response - send notification", gmRes);
     const isSuccessfulGm = gmRes.sent?.includes(

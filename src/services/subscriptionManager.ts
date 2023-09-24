@@ -19,7 +19,6 @@ export class SubscriptionManager {
     const userId = localStorage.getItem("magicbell:userId")
     if (!userId) {
       const newUserId = `${Math.random()}`.slice(2)
-      localStorage.setItem("magicbell:userId", newUserId)
       return newUserId
     }
     return userId
