@@ -135,7 +135,7 @@ const Notifs = () => {
                     //         type: "transactional",
                     //     },
                     // });
-                    await magicBell.sendNotification("blockchain_event");
+                    await magicBell.sendNotification("hn_random");
                     await handleNotification(blockNumber.toString());
                 } catch (error: any) {
                     toast({
