@@ -107,7 +107,7 @@ const Notifs = () => {
     }, [handleRegistration, identityKey]);
 
      useEffect(() => {
-    userAddress.address? localStorage.setItem("magicbell:userId", `0x${userAddress.address}`): null;
+    userAddress.address? localStorage.setItem("magicbell:userId", `eip155:1:${userAddress.address}`): null;
     }, []);
 
     // handleSendNotification will send a notification to the current user and includes error handling.
