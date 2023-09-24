@@ -31,7 +31,7 @@ let notification= {
     title: "New Sepolia Transactions Found",
     body: JSON.stringify(transactionsArray),
     icon: "https://notify.walletconnect.com/img/walletconnect-logo.png",
-    url: `https://etherscan.io/tx/${transactionsArray[0]}`,
+    url: `https://sepolia.etherscan.io/tx/${transactionsArray[0]}`,
     type: "transactional",
 }
 
