@@ -4,7 +4,7 @@ import { prefetchConfig, registerServiceWorker } from "@magicbell/webpush"
 
 import subscriptionManager from "@/services/subscriptionManager"
 import Button from "@/components/button"
-import { State } from "@/pages"
+import { State } from "@/pages/notifs"
 
 export default function Subscriber({
   state,

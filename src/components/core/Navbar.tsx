@@ -13,7 +13,7 @@ function Navbar() {
   return (
     <Flex alignItems="center" justifyContent={"space-between"} w="full" backgroundColor="section" padding={4} position='sticky'>
       <Flex gap={4} alignItems="center">
-        <Image src="/w3hlogo.png" width={60} height={60} alt="logo" />
+        <Image src="/logospidev.png" width={60} height={60} alt="logo" />
         <NavLink href="/">Home</NavLink>
       </Flex>
       <Flex gap={4} alignItems="center" justifyContent={"center"}>

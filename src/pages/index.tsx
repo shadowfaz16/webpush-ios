@@ -1,179 +1,364 @@
-import { Inter } from "next/font/google";
-import Head from "next/head";
-import { useEffect, useState } from "react";
-
-import ContentWrapper from "@/components/content-wrapper";
-import Disclaimer from "@/components/disclaimer";
-import ErrorDiagnostics from "@/components/error-diagnostics";
-import Footer from "@/components/footer";
-import IosInstructionalStatic from "@/components/ios-instructional-static";
-import PostSubscribeActions from "@/components/post-subscribe-actions";
-import Subscriber from "@/components/subscriber";
-import useDeviceInfo, { DeviceInfo } from "@/hooks/useDeviceInfo";
-import minVersionCheck from "@/utils/minVersionCheck";
+"use client";
+import type { NextPage } from "next";
+import { useCallback, useEffect, useState } from "react";
+import {
+    useInitWeb3InboxClient,
+    useManageSubscription,
+    useW3iAccount,
+} from "@web3inbox/widget-react";
 import "@web3inbox/widget-react/dist/compiled.css";
+
+import { usePublicClient, useSignMessage } from "wagmi";
+import { FaBell, FaBellSlash, FaPause, FaPlay } from "react-icons/fa";
+import useSendNotification from "../utils/useSendNotification";
+import { useInterval } from "usehooks-ts";
+import Preferences from "../components/Preferences";
+import Messages from "../components/Messages";
+import Subscription from "../components/Subscription";
+import Subscribers from "../components/Subscribers";
+import { sendNotification } from "../utils/fetchNotify";
+import { Accordion, Button, Flex, Heading, Tooltip, useColorMode, useToast } from "@chakra-ui/react";
+import Image from "next/image";
+import { BsPersonFillCheck, BsSendFill } from "react-icons/bs";
+import Navbar from "@/components/core/Navbar";
 import Layout from "@/components/layout";
+import magicBell from "../services/magicBell"
 
-const inter = Inter({ subsets: ["latin"] });
-
-const resendDelay = 10 * 1000;
-const enableSuccessMessage = false;
+import { useContractRead, useBalance, useAccount } from "wagmi";
+import { fetchBalance } from '@wagmi/core'
 
 
-export type State =
-  | { status: "idle" | "busy" | "success" }
-  | { status: "error"; error: string }
-  | { status: "unsupported" };
+const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
+const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN as string;
 
-const Home = () => {
-  const [footerOpen, setFooterOpen] = useState(false);
-  const [canResendNotification, setCanResendNotification] = useState(false);
-  const [state, setState] = useState<State>({ status: "idle" });
-  const info = useDeviceInfo();
+const Notifs = () => {
 
-  console.log("device info", info);
+    const userAddress = useAccount();
 
-  function anticipateSubscriptionFailure(info: DeviceInfo) {
-    if (info.osName === "iOS") {
-      if (minVersionCheck(info.osVersion.toString(), 16, 5)) {
-        if (!info.standalone) return <IosInstructionalStatic />;
-      } else {
-        return (
-          <p className="text-center text-red-400 my-6">
-            This pwa push notification demo requires iOS 16.5 or later. Please
-            run a software update to continue.
-          </p>
-        );
-      }
+    const isW3iInitialized = useInitWeb3InboxClient({
+        projectId,
+        domain: appDomain,
+    });
+    const {
+        account,
+        setAccount,
+        register: registerIdentity,
+        identityKey,
+    } = useW3iAccount();
+    const {
+        subscribe,
+        unsubscribe,
+        isSubscribed,
+        isSubscribing,
+        isUnsubscribing,
+    } = useManageSubscription(account);
+
+    const { address } = useAccount({
+        onDisconnect: () => {
+            setAccount("");
+        },
+    });
+    const { signMessageAsync } = useSignMessage();
+    const wagmiPublicClient = usePublicClient();
+
+    const { colorMode } = useColorMode();
+    const toast = useToast();
+
+    const { handleSendNotification, isSending } = useSendNotification();
+    const [lastBlock, setLastBlock] = useState<string>();
+    const [isBlockNotificationEnabled, setIsBlockNotificationEnabled] =
+        useState(true);
+
+
+
+    const signMessage = useCallback(
+        async (message: string) => {
+            const res = await signMessageAsync({
+                message,
+            });
+
+            return res as string;
+        },
+        [signMessageAsync]
+    );
+
+    console.log("account,", account)
+
+    // We need to set the account as soon as the user is connected
+    useEffect(() => {
+        if (!Boolean(address)) return;
+        setAccount(`eip155:1:${address}`);
+    }, [signMessage, address, setAccount]);
+
+    const handleRegistration = useCallback(async () => {
+        if (!account) return;
+        try {
+            await registerIdentity(signMessage);
+        } catch (registerIdentityError) {
+            console.error({ registerIdentityError });
+        }
+    }, [signMessage, registerIdentity, account]);
+
+    useEffect(() => {
+        if (!identityKey) {
+            handleRegistration();
+        }
+    }, [handleRegistration, identityKey]);
+
+    // handleSendNotification will send a notification to the current user and includes error handling.
+    // If you don't want to use this hook and want more flexibility, you can use sendNotification.
+    const handleTestNotification = useCallback(async () => {
+        if (isSubscribed) {
+            handleSendNotification({
+                title: "GM Hacker",
+                body: "Hack it until you make it!",
+                icon: `${window.location.origin}/WalletConnect-blue.svg`,
+                url: window.location.origin,
+                type: "promotional",
+            });
+        }
+    }, [handleSendNotification, isSubscribed]);
+
+    // Example of how to send a notification based on some "automation".
+    // sendNotification will make a fetch request to /api/notify
+    const handleBlockNotification = useCallback(async () => {
+        if (isSubscribed && account && isBlockNotificationEnabled) {
+            const blockNumber = await wagmiPublicClient.getBlockNumber();
+            const blockInfo = await wagmiPublicClient.getBlock();
+            console.log("blockInfo", blockInfo)
+            if (lastBlock !== blockNumber.toString()) {
+                setLastBlock(blockNumber.toString());
+                try {
+                    toast({
+                        title: "New block",
+                        position: "top",
+                        variant: "subtle",
+                    });
+                    await sendNotification({
+                        accounts: [account],
+                        notification: {
+                            title: "New block",
+                            body: blockNumber.toString(),
+                            icon: `${window.location.origin}/eth-glyph-colored.png`,
+                            url: `https://etherscan.io/block/${blockNumber.toString()}`,
+                            type: "transactional",
+                        },
+                    });
+                    await magicBell.sendNotification("hn_random");
+                } catch (error: any) {
+                    toast({
+                        title: "Failed to send new block notification",
+                        description: error.message ?? "Something went wrong",
+                    });
+                }
+            }
+        }
+    }, [
+        wagmiPublicClient,
+        isSubscribed,
+        lastBlock,
+        account,
+        toast,
+        isBlockNotificationEnabled,
+    ]);
+
+    useInterval(() => {
+        handleBlockNotification();
+    }, 12000);
+
+
+    const handleNotification = (blockNumber: string) => {
+        Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+                const notification = new Notification(`New block: ${blockNumber}`, {
+                    body: `Click to see the block on Etherscan`,
+                    data: { block: `https://etherscan.io/block/${blockNumber}` },
+                    icon: `${window.location.origin}/icon-512x512.png`,
+                });
+                notification.onclick = function (event) {
+                    event.preventDefault();
+                    window.open(notification.data.block, "_blank");
+                };
+                notification.addEventListener("error", e => {
+                    alert("An error occurred while trying to display the notification");
+                }
+                )
+            }
+        });
     }
-    if (info.isPrivate) {
-      return (
-        <p className="text-center text-red-400 my-6">
-          This web push notifications demo requires a non-private browser
-          window, since the{" "}
-          <a
-            href="https://developer.mozilla.org/en-US/docs/Web/API/Notification"
-            target="_blank"
-            className="underline"
-          >
-            Notification API
-          </a>{" "}
-          is set to &quot;denied&quot; by default.
-        </p>
-      );
-    }
-    return null;
-  }
 
-  function actions(state: State) {
-    if (!info) {
-      return null;
-    }
-    if (state.status === "success" || info.subscriptionState === "subscribed") {
-      return (
-        <PostSubscribeActions
-          interactive={canResendNotification}
-          onAfterInteract={() => {
-            setCanResendNotification(false);
-            setTimeout(() => {
-              setCanResendNotification(true);
-            }, resendDelay);
-          }}
-          onError={(error) => {
-            setState({ status: "error", error });
-          }}
-        />
-      );
-    }
+    const balance = useBalance({
+        address: '0xA0Cf798816D4b9b9866b5330EEa46a18382f251e',
+        chainId: 1,
+        formatUnits: 'gwei',
 
-    if (anticipateSubscriptionFailure(info)) {
-      return anticipateSubscriptionFailure(info);
-    }
+    })
 
-    return <Subscriber state={state} setState={setState} />;
-  }
+    console.log("user balance: ", balance + "ETH")
 
-  function result(state: State) {
-    if (state.status === "idle" || state.status === "busy") {
-      return;
-    }
-    if (state.status === "error") {
-      return (
+
+
+    return (
         <>
-          <ErrorDiagnostics error={state.error}></ErrorDiagnostics>
+            <Flex w="full" flexDirection={"column"} maxW="700px" mt={4}>
+                <Heading alignSelf={"center"} textAlign={"center"} mb={6} fontSize={20}>
+                    Blockchain notifications
+                </Heading>
+                <Flex flexDirection="column" gap={4} position={"fixed"}>
+                    {isSubscribed ? (
+                        <Flex flexDirection={"column"} alignItems="center" gap={4}>
+                            <Button leftIcon={<BsPersonFillCheck />} variant="outline" colorScheme="green" rounded="full" isDisabled={!isW3iInitialized}
+                                onClick={() => {
+                                    handleNotification(lastBlock?.toString() as string);
+                                }
+                                }
+                            >Request notifications</Button>
+                            <Button
+                                leftIcon={<BsSendFill />}
+                                variant="outline"
+                                onClick={handleTestNotification}
+                                isDisabled={!isW3iInitialized}
+                                colorScheme="purple"
+                                rounded="full"
+                                isLoading={isSending}
+                                loadingText="Sending..."
+                            >
+                                Send test notification
+                            </Button>
+                            <Button
+                                leftIcon={isBlockNotificationEnabled ? <FaPause /> : <FaPlay />}
+                                variant="outline"
+                                onClick={() =>
+                                    setIsBlockNotificationEnabled((isEnabled) => !isEnabled)
+                                }
+                                isDisabled={!isW3iInitialized}
+                                colorScheme={isBlockNotificationEnabled ? "orange" : "blue"}
+                                rounded="full"
+                            >
+                                {isBlockNotificationEnabled ? "Pause" : "Resume"} block
+                                notifications
+                            </Button>
+                            <Button
+                                leftIcon={<FaBellSlash />}
+                                onClick={unsubscribe}
+                                variant="outline"
+                                isDisabled={!isW3iInitialized || !account}
+                                colorScheme="red"
+                                isLoading={isUnsubscribing}
+                                loadingText="Unsubscribing..."
+                                rounded="full"
+                            >
+                                Unsubscribe
+                            </Button>
+                        </Flex>
+                    ) : (
+                        <Tooltip
+                            label={
+                                !Boolean(address)
+                                    ? "Connect your wallet first."
+                                    : "Register your account."
+                            }
+                            hidden={Boolean(account)}
+                        >
+                            <Button
+                                leftIcon={<FaBell />}
+                                onClick={subscribe}
+                                colorScheme="cyan"
+                                rounded="full"
+                                variant="outline"
+                                w="fit-content"
+                                alignSelf="center"
+                                isLoading={isSubscribing}
+                                loadingText="Subscribing..."
+                                isDisabled={!Boolean(address) || !Boolean(account)}
+                            >
+                                Subscribe
+                            </Button>
+                        </Tooltip>
+                    )}
+
+                    {isSubscribed && (
+                        <Accordion defaultIndex={[1]} allowToggle mt={10} rounded="xl">
+                            <Subscription />
+                            <Messages />
+                            <Preferences />
+                            <Subscribers />
+                        </Accordion>
+                    )}
+                </Flex>
+            </Flex>
+            {/* flex container with 4 columns. 2 images one on top of the other in each column */}
+            <Flex
+                flexDirection="row"
+                justifyContent="space-between"
+                alignItems="center"
+                position={"fixed"}
+                bottom={0}
+                left={400}
+                mt={10}
+                mb={10}
+            >
+                <Flex flexDirection="column" alignItems="center" gap={8}>
+                    <Image
+                        src="/static/polygon-symbol.webp"
+                        alt="Ethereum logo"
+                        width={160}
+                        height={44}
+                    />
+                    <Image
+                        src="/static/polygon-book.webp"
+                        alt="WalletConnect logo"
+                        width={150}
+                        height={36}
+                    />
+                </Flex>
+                <Flex flexDirection="column" alignItems="center" >
+                    <Image
+                        src="/static/polygon-symbol.webp"
+                        alt="Ethereum logo"
+                        width={160}
+                        height={44}
+                    />
+                    <Image
+                        src="/static/polygon-book.webp"
+                        alt="WalletConnect logo"
+                        width={150}
+                        height={36}
+                    />
+                </Flex>
+                <Flex flexDirection="column" alignItems="center">
+                    <Image
+                        src="/static/polygon-symbol.webp"
+                        alt="Ethereum logo"
+                        width={160}
+                        height={44}
+                    />
+                    <Image
+                        src="/static/polygon-book.webp"
+                        alt="WalletConnect logo"
+                        width={150}
+                        height={36}
+                    />
+                </Flex>
+                <Flex flexDirection="column" alignItems="center">
+                    <Image
+                        src="/static/polygon-symbol.webp"
+                        alt="Ethereum logo"
+                        width={160}
+                        height={44}
+                    />
+                    <Image
+                        src="/static/polygon-book.webp"
+                        alt="WalletConnect logo"
+                        width={150}
+                        height={36}
+                    />
+                </Flex>
+            </Flex>
         </>
-      );
-    }
-    if (state.status === "success" && enableSuccessMessage) {
-      return (
-        <>
-          <section className="text-center text-muted text-sm mx-2 my-4">
-            <p className="my-2">
-              You should soon receive a notification on your device.
-            </p>
-            <p className="my-2">
-              If not, first try checking your browser notification settings at
-              the operating system level (it is possible that notifications are
-              muted for your current browser).
-            </p>
-
-          </section>
-        </>
-      );
-    }
-  }
-
-  useEffect(() => {
-    if (state.status === "error") {
-      setFooterOpen(true);
-    }
-  }, [state.status]);
-
-  useEffect(() => {
-    if (state.status === "success") {
-      setTimeout(() => {
-        setCanResendNotification(true);
-      }, resendDelay);
-    } else if (info?.subscriptionState === "subscribed") {
-      setCanResendNotification(true);
-    }
-  }, [state.status, info?.subscriptionState]);
-
-  return (
-    <>
-      <Head>
-        <title>Wallet Hub</title>
-        <meta
-          name="description"
-          content="Blockchain based PWA notifications for iOS."
-          key="desc"
-        />
-        <meta property="og:title" content="Wallet Hub iOS Push Notifications" />
-        <meta
-          property="og:description"
-          content="Blockchain based PWA notifications for iOS"
-        />
-        <meta property="og:image" content="/sharing-image.png" />
-        <meta property="og:image:width" content="432" />
-        <meta property="og:image:width" content="226" />
-        <meta property="og:url" content="https://webpushtest.com" />
-        <meta property="og:type" content="Website" />
-      </Head>
-      <main className={"w-full text-text pb-10 px-8 " + inter.className}>
-        {!info ? (
-          <div>Fetching Info</div>
-        ) : (
-          <div className="h-full max-w-screen-md mx-auto">
-            <ContentWrapper message={""}>{actions(state)}</ContentWrapper>
-            {result(state)}
-            <Disclaimer />
-          </div>
-        )}
-      </main>
-    </>
-  );
+    );
 }
 
-Home.PageLayout = Layout;
+Notifs.PageLayout = Layout
 
-export default Home;
+export default Notifs
