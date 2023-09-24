@@ -18,11 +18,12 @@ export default function Footer(props: {
         onOpenChange={props.setOpen}
       >
         <Collapsible.Trigger asChild>
+          {/* bg-section */}
           <div
-            className="bg-section h-10 flex justify-center px-2 cursor-pointer icon-hoverable"
+            className="bg-transparent h-10 flex justify-center px-2 cursor-pointer icon-hoverable"
             title="Toggle device details"
           >
-            <div className="flex items-center justify-center gap-x-4 text-text font-light text-xs">
+            <div className="flex items-center justify-center gap-x-4 text-black  text-xs">
               <span>Toggle device information</span>
               {props.open ? (
                 <Image

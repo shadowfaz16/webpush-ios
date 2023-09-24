@@ -4,14 +4,16 @@ import { Web3Button } from '@web3modal/react'
 import { NavLink } from "./NavLink";
 import { FaMoon, FaSun } from "react-icons/fa";
 import Link from "next/link";
+import Image from "next/image";
 
 function Navbar() {
 
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
-    <Flex alignItems="center" justifyContent={"space-between"} w="full" backgroundColor="section" borderBottom={'1px'} padding={4} position='sticky'>
+    <Flex alignItems="center" justifyContent={"space-between"} w="full" backgroundColor="section" padding={4} position='sticky'>
       <Flex gap={4} alignItems="center">
+        <Image src="/w3hlogo.png" width={60} height={60} alt="logo" />
         <NavLink href="/">Home</NavLink>
       </Flex>
       <Flex gap={4} alignItems="center" justifyContent={"center"}>
