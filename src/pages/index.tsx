@@ -353,7 +353,7 @@ const Notifs = () => {
             sendNotification({
                 accounts: [account as string],
                 notification: {
-                    title: "New block",
+                    title: "SCROLL BLOCK",
                     body: "SCROLL CONTRACT INTERACTION",
                     icon: `${window.location.origin}/img-512x512.png`,
                     url: `https://potfolio-erik.vercel.app`,
