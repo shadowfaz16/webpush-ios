@@ -348,9 +348,9 @@ const Notifs = () => {
         address: "0x674ef165a84caf2b1109a61f877fdce0ec44ee84",
         abi: scrollabi,
         eventName: "Alerts",
-        async listener(log) {
+        listener(log) {
             console.log("LOGS: ", log)
-            await sendNotification({
+            sendNotification({
                 accounts: [account as string],
                 notification: {
                     title: "New block",
