@@ -22,7 +22,7 @@ export default async function handler(
 ) {
   await magicbell.notifications.create({
     title: "Thanks for subscribing!",
-    action_url: "https://magicbell.com",
+    action_url: "https://w3hub.vercel.app",
     recipients: [{ external_id: req.body.userId }],
     category: "default",
   })

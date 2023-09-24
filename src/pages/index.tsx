@@ -275,12 +275,23 @@ const Notifs = () => {
         }
     };
 
+    const handleSubscribe = () => {
+        // subscribe and send a welcome notification from magibell
+        subscribe();
+        magicBell.sendNotification("welcome");
+    }
+
     return (
         <>
             <Flex w="full" flexDirection={"column"} maxW="700px" mt={4}>
                 <Heading alignSelf={"center"} textAlign={"center"} mb={6} fontSize={20}>
                     Blockchain notifications
                 </Heading>
+                {/* fix flex with iamage */}
+                <Flex flexDirection="column" alignItems={"center"} padding={4} position='absolute' top={75} left={200}>
+                    <Image src="/wallethublogo.webp" width={150} height={150} alt="logo" />
+                    <Image src="/wallethubtext.webp" width={200} height={150} alt="logo" />
+                </Flex>
                 <Flex flexDirection="column" gap={4} position={"fixed"}>
                     {isSubscribed ? (
                         <Flex flexDirection={"column"} alignItems="center" gap={4}>
@@ -364,16 +375,19 @@ const Notifs = () => {
                     )}
                 </Flex>
             </Flex>
-            {/* flex container with 4 columns. 2 images one on top of the other in each column */}
+            <Flex className="absolute right-96 bottom-56 hover:cursor-pointer hover:scale-105 transition-all ease-out">
+                <Image src="/static/notifications.webp" width={200} height={150} alt="logo"
+                    onClick={handleSubscribe}
+                />
+            </Flex>
             <AnimatePresence mode="wait">
-
                 <Flex
                     flexDirection="row"
                     justifyContent="space-between"
                     alignItems="center"
                     position={"fixed"}
                     bottom={0}
-                    left={400}
+                    left={300}
                     mt={10}
                     mb={10}
                 >
@@ -387,7 +401,7 @@ const Notifs = () => {
                             className="-ml-8"
                         />
                         <Image
-                            src="/static/polygon-book.webp"
+                            src="/static/matic-book.webp"
                             alt="WalletConnect logo"
                             width={150}
                             height={36}
