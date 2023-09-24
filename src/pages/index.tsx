@@ -1,6 +1,6 @@
 "use client";
 import type { NextPage } from "next";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
     useInitWeb3InboxClient,
     useManageSubscription,
@@ -27,14 +27,24 @@ import magicBell from "../services/magicBell"
 import { useContractRead, useBalance, useAccount } from "wagmi";
 
 import { AnimatePresence, motion } from "framer-motion";
+import subscriptionManager from "@/services/subscriptionManager";
+import { clientSettings, useConfig } from "@magicbell/react-headless";
 
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
 const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN as string;
 
+
+export type State =
+    | { status: "idle" | "busy" | "success" }
+    | { status: "error"; error: string }
+    | { status: "unsupported" };
+
+
 const Notifs = () => {
 
     const userAddress = useAccount();
+    const [state, setState] = useState<State>({ status: "idle" });
 
 
     const isW3iInitialized = useInitWeb3InboxClient({
@@ -287,13 +297,41 @@ const Notifs = () => {
         }
     };
 
-    const handleSubscribe = () => {
-        // subscribe and send a welcome notification from magibell
-        subscribe();
-        magicBell.sendNotification("welcome");
+    // const handleSubscribe = () => {
+    //     // subscribe and send a welcome notification from magibell
+    //     subscribe();
+    //     magicBell.sendNotification("welcome");
+    // }
+
+    const config = useConfig()
+    const subscribeOptions = useMemo(() => {
+        const host = "https://api.magicbell.com"
+        try {
+            const url = new URL(config.channels?.webPush.config.subscribeUrl || "")
+            return {
+                token: url.searchParams.get("access_token") || "",
+                project: url.searchParams.get("project") || "",
+                host,
+            }
+        } catch (e) {
+            return { token: "", project: "", host }
+        }
+    }, [config])
+
+
+    const handleSubscribe = async () => {
+        try {
+            setState({ status: "busy" })
+            await subscriptionManager.subscribe(
+                clientSettings.getState().userExternalId as string, // TODO: fix typing here
+                subscribeOptions
+            )
+            setState({ status: "success" })
+            subscribe();
+        } catch (error: any) {
+            setState({ status: "error", error: error.message })
+        }
     }
-
-
 
     return (
         <>
