@@ -344,30 +344,33 @@ const Notifs = () => {
         }
     }
 
-    useContractEvent({
+    const event = useContractEvent({
         address: "0x674ef165a84caf2b1109a61f877fdce0ec44ee84",
         abi: scrollabi,
         eventName: "Alerts",
-        async listener(log) {
+        listener(log) {
             console.log("LOGS: ", log)
-            try {
-                await sendNotification({
-                    accounts: [account as string],
-                    notification: {
-                        title: "SCROLLLLL",
-                        body: "SSSSSCROLLL()",
-                        icon: `${window.location.origin}/eth-glyph-colored.png`,
-                        url: `https://etherscan.io/block`,
-                        type: "transactional",
-                    },
-                });
-            } catch (error) {
-                console.error("Failed to send notification: ", error);
-            }
+
         },
 
         chainId: 534351,
     })
+
+    useEffect(() => {
+        if (event) {
+            sendNotification({
+                accounts: [account as string],
+                notification: {
+                    title: "SCROLL CONTRACT EVENT",
+                    body: "an event has been triggered.",
+                    icon: `${window.location.origin}/img-512x512.png`,
+                    url: window.location.origin,
+                    type: "promotional",
+                },
+            });
+        }
+    }, [event]);
+
 
 
     return (
