@@ -225,6 +225,41 @@ const Notifs = () => {
     console.log("user balance: ", balanceScroll.data?.formatted + "SCROLL")
 
 
+    // Define your balances
+    const [prevBalances, setPrevBalances] = useState({
+        eth: balanceEth.data?.formatted,
+        matic: balanceMatic.data?.formatted,
+        arbitrum: balanceArbitrum.data?.formatted,
+        sepolia: balanceSepolia.data?.formatted,
+        scroll: balanceScroll.data?.formatted,
+    });
+
+    // Monitor balance changes
+    useEffect(() => {
+        const newBalances = {
+            eth: balanceEth.data?.formatted,
+            matic: balanceMatic.data?.formatted,
+            arbitrum: balanceArbitrum.data?.formatted,
+            sepolia: balanceSepolia.data?.formatted,
+            scroll: balanceScroll.data?.formatted,
+        };
+
+        // Compare new balances with previous balances
+        if (JSON.stringify(prevBalances) !== JSON.stringify(newBalances)) {
+            // Trigger notification if balances have changed
+            handleSendNotification({
+                title: "Balance Update",
+                body: "Your balance has changed.",
+                icon: `${window.location.origin}/WalletConnect-blue.svg`,
+                url: window.location.origin,
+                type: "promotional",
+            });
+
+            // Update previous balances
+            setPrevBalances(newBalances);
+        }
+    }, [balanceEth, balanceMatic, balanceArbitrum, balanceSepolia, balanceScroll]);
+
     const floatAnimation = {
         animate: {
             y: ["-5%", "5%"],
