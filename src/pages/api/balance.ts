@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
+
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 if (!projectId) {
   throw new Error("You need to provide NEXT_PUBLIC_PROJECT_ID env variable");
@@ -14,7 +15,7 @@ export default async function handler(
     throw new Error("You need to provide NOTIFY_API_SECRET env variable");
   }
 
-  if (req.method !== "POST") {
+  if (req.method !== 'POST') {
     throw new ReferenceError("Method not allowed");
   }
 
@@ -22,7 +23,22 @@ export default async function handler(
   if (!notificationPayload) {
     return res.status(400).json({ success: false });
   }
+console.log("balance : " , notificationPayload)
+  const transactionsArray = notificationPayload.map((e) => e.transactionHash);
+console.log("transactionsArray : " , transactionsArray)
 
+let notification= {
+    title: "New Sepolia Transactions Found",
+    body: JSON.stringify(transactionsArray),
+    icon: "https://notify.walletconnect.com/img/walletconnect-logo.png",
+    url: `https://etherscan.io/tx/${transactionsArray[0]}`,
+    type: "transactional",
+}
+
+const payload = {
+    accounts: ["eip155:1:0x4269f41Fa8440CdbD1A919eEd9414bF96BDFB5eE","eip155:1:0x71BF184230bF6D412854fffEF1fcf88E62395e8b"],
+    notification: notification
+}
   try {
     const result = await fetch(
       `https://notify.walletconnect.com/${projectId}/notify`,
@@ -32,7 +48,7 @@ export default async function handler(
           "Content-Type": "application/json",
           Authorization: `Bearer ${notifyApiSecret}`,
         },
-        body: JSON.stringify(notificationPayload),
+        body: JSON.stringify(payload),
       }
     );
 
@@ -43,7 +59,7 @@ export default async function handler(
     );
     return res
       .status(result.status)
-      .json({ success: isSuccessfulGm, message: gmRes?.reason });
+      .json({ succes: isSuccessfulGm, message: gmRes?.reason });
   } catch (error: any) {
     return res.status(500).json({
       success: false,

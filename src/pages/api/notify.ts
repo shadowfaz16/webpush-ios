@@ -19,10 +19,11 @@ export default async function handler(
   }
 
   const notificationPayload = req.body;
+  console.log({ notificationPayload })
   if (!notificationPayload) {
     return res.status(400).json({ success: false });
   }
-
+console.log("notify secret", notifyApiSecret)
   try {
     const result = await fetch(
       `https://notify.walletconnect.com/${projectId}/notify`,
@@ -35,7 +36,7 @@ export default async function handler(
         body: JSON.stringify(notificationPayload),
       }
     );
-
+      console.log("result", result)
     const gmRes = await result.json(); // { "sent": ["eip155:1:0xafeb..."], "failed": [], "not_found": [] }
     console.log("Notify Server response - send notification", gmRes);
     const isSuccessfulGm = gmRes.sent?.includes(
