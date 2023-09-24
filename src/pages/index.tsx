@@ -357,9 +357,10 @@ const Notifs = () => {
     })
 
     useEffect(() => {
-        if (event && event.result) {
+        if (event) {
+            console.log("event: ", event)
             sendNotification({
-                accounts: [account as string],
+                accounts: [account ? account : ""],
                 notification: {
                     title: "SCROLL CONTRACT EVENT",
                     body: "an event has been triggered.",
