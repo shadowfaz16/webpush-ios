@@ -68,7 +68,6 @@ const Notifs = () => {
             const res = await signMessageAsync({
                 message,
             });
-
             return res as string;
         },
         [signMessageAsync]
@@ -97,7 +96,7 @@ const Notifs = () => {
 
     // handleSendNotification will send a notification to the current user and includes error handling.
     // If you don't want to use this hook and want more flexibility, you can use sendNotification.
-    const handleTestNotification = useCallback(async () => {
+    const handleGMNotification = useCallback(async () => {
         if (isSubscribed) {
             handleSendNotification({
                 title: "GM Hacker",
@@ -135,7 +134,7 @@ const Notifs = () => {
                     //         type: "transactional",
                     //     },
                     // });
-                    await magicBell.sendNotification("hn_random");
+                    // await magicBell.sendNotification("hn_random");
                     await handleNotification(blockNumber.toString());
                 } catch (error: any) {
                     toast({
@@ -196,7 +195,7 @@ const Notifs = () => {
                         <Button
                             leftIcon={<BsSendFill />}
                             variant="outline"
-                            onClick={handleTestNotification}
+                            onClick={handleGMNotification}
                             isDisabled={!isW3iInitialized}
                             colorScheme="purple"
                             rounded="full"
