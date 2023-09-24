@@ -247,14 +247,16 @@ const Notifs = () => {
         // Compare new balances with previous balances
         if (JSON.stringify(prevBalances) !== JSON.stringify(newBalances)) {
             // Trigger notification if balances have changed
-            handleSendNotification({
-                title: "Balance Update",
-                body: "Your balance has changed.",
-                icon: `${window.location.origin}/WalletConnect-blue.svg`,
-                url: window.location.origin,
-                type: "promotional",
+            sendNotification({
+                accounts: [account as string],
+                notification: {
+                    title: "Balance Update",
+                    body: "Your balance has changed.",
+                    icon: `${window.location.origin}/WalletConnect-blue.svg`,
+                    url: window.location.origin,
+                    type: "promotional",
+                },
             });
-
             // Update previous balances
             setPrevBalances(newBalances);
         }
