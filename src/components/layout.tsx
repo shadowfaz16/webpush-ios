@@ -4,7 +4,6 @@ import Footer from './footer';
 import { useState } from 'react';
 
 
-
 const Layout = ({ children }: { children: React.ReactNode }) => {
     const [footerOpen, setFooterOpen] = useState(false);
     return (
@@ -21,7 +20,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 {children}
                 <Footer open={footerOpen} setOpen={setFooterOpen} />
             </main>
-
         </>
     )
 };

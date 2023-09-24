@@ -25,7 +25,6 @@ import Layout from "@/components/layout";
 import magicBell from "../services/magicBell"
 
 import { useContractRead, useBalance, useAccount } from "wagmi";
-import { fetchBalance } from '@wagmi/core'
 
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -195,14 +194,36 @@ const Notifs = () => {
         });
     }
 
-    const balance = useBalance({
-        address: '0xA0Cf798816D4b9b9866b5330EEa46a18382f251e',
+    const balanceEth = useBalance({
+        address,
         chainId: 1,
-        formatUnits: 'gwei',
 
     })
+    const balanceMatic = useBalance({
+        address,
+        chainId: 137,
 
-    console.log("user balance: ", balance + "ETH")
+    })
+    const balanceArbitrum = useBalance({
+        address,
+        chainId: 42161,
+
+    })
+    const balanceSepolia = useBalance({
+        address,
+        chainId: 11155111,
+    })
+    const balanceScroll = useBalance({
+        address,
+        chainId: 534351,
+    })
+
+    console.log("user balance: ", balanceEth.data?.formatted + "ETH")
+    console.log("user balance: ", balanceMatic.data?.formatted + "MATIC")
+    console.log("user balance: ", balanceArbitrum.data?.formatted + "ARB")
+    console.log("user balance: ", balanceSepolia.data?.formatted + "SEPOLIA")
+    console.log("user balance: ", balanceScroll.data?.formatted + "SCROLL")
+
 
     const floatAnimation = {
         animate: {
@@ -320,11 +341,13 @@ const Notifs = () => {
                     mb={10}
                 >
                     <Flex flexDirection="column" alignItems="center" gap={4}>
-                        <Image
-                            src="/static/polygon-symbol.webp"
+                        <motion.img
+                            {...floatAnimation}
+                            src="/static/polygon-logo.webp"
                             alt="Ethereum logo"
                             width={160}
                             height={44}
+                            className="-ml-8"
                         />
                         <Image
                             src="/static/polygon-book.webp"
@@ -333,7 +356,7 @@ const Notifs = () => {
                             height={36}
                         />
                     </Flex>
-                    <Flex flexDirection="column" alignItems="center" mt={-10}>
+                    <Flex flexDirection="column" alignItems="center" gap={4} mt={-14}>
                         <motion.img
                             {...floatAnimation}
                             src="/static/arb-symbol.webp"
@@ -366,7 +389,7 @@ const Notifs = () => {
                             height={36}
                         />
                     </Flex>
-                    <Flex flexDirection="column" alignItems="center" mt={-36}>
+                    <Flex flexDirection="column" alignItems="center" gap={4} mt={-40}>
                         <motion.img
                             {...floatAnimation}
                             src="/static/scroll-symbol.webp"
