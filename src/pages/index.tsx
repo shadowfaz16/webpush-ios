@@ -348,18 +348,27 @@ const Notifs = () => {
         address: "0x674ef165a84caf2b1109a61f877fdce0ec44ee84",
         abi: scrollabi,
         eventName: "Alerts",
-        listener(log) {
+        async listener(log) {
             console.log("LOGS: ", log)
-            handleSendNotification({
-                title: "SCROLLLLLLL",
-                body: "SCROLLLLLLL!",
-                icon: `${window.location.origin}/WalletConnect-blue.svg`,
-                url: window.location.origin,
-                type: "promotional",
-            });
+            try {
+                await sendNotification({
+                    accounts: [account as string],
+                    notification: {
+                        title: "New block",
+                        body: "blockNumber.toString()",
+                        icon: `${window.location.origin}/eth-glyph-colored.png`,
+                        url: `https://etherscan.io/block`,
+                        type: "transactional",
+                    },
+                });
+            } catch (error) {
+                console.error("Failed to send notification: ", error);
+            }
         },
+
         chainId: 534351,
     })
+
 
     return (
         <>
