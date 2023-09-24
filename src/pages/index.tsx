@@ -3,25 +3,22 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 
 import ContentWrapper from "@/components/content-wrapper";
-import Disclaimer, { magicBellHandle } from "@/components/disclaimer";
+import Disclaimer from "@/components/disclaimer";
 import ErrorDiagnostics from "@/components/error-diagnostics";
 import Footer from "@/components/footer";
 import IosInstructionalStatic from "@/components/ios-instructional-static";
-import Links from "@/components/links";
 import PostSubscribeActions from "@/components/post-subscribe-actions";
-import SeoText from "@/components/seo-text";
 import Subscriber from "@/components/subscriber";
 import useDeviceInfo, { DeviceInfo } from "@/hooks/useDeviceInfo";
 import minVersionCheck from "@/utils/minVersionCheck";
 import "@web3inbox/widget-react/dist/compiled.css";
-import { useSignMessage, useAccount } from 'wagmi'
-import Navbar from "@/components/core/Navbar";
 import Layout from "@/components/layout";
 
 const inter = Inter({ subsets: ["latin"] });
 
 const resendDelay = 10 * 1000;
 const enableSuccessMessage = false;
+
 
 export type State =
   | { status: "idle" | "busy" | "success" }
@@ -34,6 +31,8 @@ const Home = () => {
   const [state, setState] = useState<State>({ status: "idle" });
   const info = useDeviceInfo();
 
+  console.log("device info", info);
+
   function anticipateSubscriptionFailure(info: DeviceInfo) {
     if (info.osName === "iOS") {
       if (minVersionCheck(info.osVersion.toString(), 16, 5)) {
@@ -41,7 +40,7 @@ const Home = () => {
       } else {
         return (
           <p className="text-center text-red-400 my-6">
-            This web push notifications demo requires iOS 16.5 or later. Please
+            This pwa push notification demo requires iOS 16.5 or later. Please
             run a software update to continue.
           </p>
         );
@@ -143,16 +142,16 @@ const Home = () => {
   return (
     <>
       <Head>
-        <title>Web Push Notifications Demo | MagicBell</title>
+        <title>Wallet Hub</title>
         <meta
           name="description"
-          content="Web push notifications demo and starter template with support for iOS Safari PWA notifications."
+          content="Blockchain based PWA notifications for iOS."
           key="desc"
         />
-        <meta property="og:title" content="Web Push Notifications Demo" />
+        <meta property="og:title" content="Wallet Hub iOS Push Notifications" />
         <meta
           property="og:description"
-          content="Web push notifications demo and starter template with support for iOS Safari PWA notifications."
+          content="Blockchain based PWA notifications for iOS"
         />
         <meta property="og:image" content="/sharing-image.png" />
         <meta property="og:image:width" content="432" />
@@ -167,13 +166,10 @@ const Home = () => {
           <div className="h-full max-w-screen-md mx-auto">
             <ContentWrapper message={""}>{actions(state)}</ContentWrapper>
             {result(state)}
-            <Links />
-            <SeoText />
             <Disclaimer />
           </div>
         )}
       </main>
-      <Footer open={footerOpen} setOpen={setFooterOpen} />
     </>
   );
 }

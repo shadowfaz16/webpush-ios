@@ -15,6 +15,7 @@ export type NotificationType =
   | "hn_top_story"
   | "hn_top_new"
   | "hn_random"
+  | "blockchain_event"
 
 class MagicBell {
   constructor() {}
@@ -143,6 +144,8 @@ class MagicBell {
         return "hn_top_story"
       case topics["HN Top New"].id:
         return "hn_top_new"
+         case topics["Blockchain Event"].id:
+      return "blockchain_event";
       default:
         return "welcome"
     }

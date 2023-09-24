@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-function Tile(props: {
+function Instruction(props: {
   index: number;
   caption: string;
   captionHeight?: number;
@@ -37,10 +37,10 @@ export default function IosInstructionalStatic() {
         Installation instructions
       </h2>
       <section className="w-full max-w-xs mx-auto">
-        <Tile index={1} caption={"In Safari, click the 'share' button"} />
-        <Tile index={2} caption={"Click 'Add to Home Screen'"} />
-        <Tile index={3} caption={"Review settings and click 'Add'"} />
-        <Tile index={4} caption={"Launch app from home screen"} />
+        <Instruction index={1} caption={"In Safari or chrome, click the 'share' button"} />
+        <Instruction index={2} caption={"Click 'Add to Home Screen'"} />
+        <Instruction index={3} caption={"Review settings and click 'Add'"} />
+        <Instruction index={4} caption={"Launch app from home screen"} />
       </section>
     </>
   );

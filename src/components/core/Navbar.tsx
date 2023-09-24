@@ -10,7 +10,7 @@ function Navbar() {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
-    <Flex alignItems="center" justifyContent={"space-between"} w="full" backgroundColor="white" padding={4} position='sticky'>
+    <Flex alignItems="center" justifyContent={"space-between"} w="full" backgroundColor="section" borderBottom={'1px'} padding={4} position='sticky'>
       <Flex gap={4} alignItems="center">
         <NavLink href="/">Home</NavLink>
       </Flex>

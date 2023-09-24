@@ -7,7 +7,6 @@ import {
     useW3iAccount,
 } from "@web3inbox/widget-react";
 import "@web3inbox/widget-react/dist/compiled.css";
-import { useContractRead, useBalance, useContractEvent } from "wagmi";
 
 import { useAccount, usePublicClient, useSignMessage } from "wagmi";
 import { FaBell, FaBellSlash, FaPause, FaPlay } from "react-icons/fa";
@@ -23,14 +22,12 @@ import Image from "next/image";
 import { BsPersonFillCheck, BsSendFill } from "react-icons/bs";
 import Navbar from "@/components/core/Navbar";
 import Layout from "@/components/layout";
+import magicBell from "../services/magicBell"
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
 const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN as string;
 
-
-type Props = {}
-
-const Notifs = (props: Props) => {
+const Notifs = () => {
 
     const isW3iInitialized = useInitWeb3InboxClient({
         projectId,
@@ -128,16 +125,17 @@ const Notifs = (props: Props) => {
                         position: "top",
                         variant: "subtle",
                     });
-                    await sendNotification({
-                        accounts: [account], // accounts that we want to send the notification to.
-                        notification: {
-                            title: "New block",
-                            body: blockNumber.toString(),
-                            icon: `${window.location.origin}/eth-glyph-colored.png`,
-                            url: `https://etherscan.io/block/${blockNumber.toString()}`,
-                            type: "transactional",
-                        },
-                    });
+                    // await sendNotification({
+                    //     accounts: [account],
+                    //     notification: {
+                    //         title: "New block",
+                    //         body: blockNumber.toString(),
+                    //         icon: `${window.location.origin}/eth-glyph-colored.png`,
+                    //         url: `https://etherscan.io/block/${blockNumber.toString()}`,
+                    //         type: "transactional",
+                    //     },
+                    // });
+                    await magicBell.sendNotification("blockchain_event");
                     await handleNotification(blockNumber.toString());
                 } catch (error: any) {
                     toast({
@@ -167,12 +165,6 @@ const Notifs = (props: Props) => {
                 const notification = new Notification(`New block: ${blockNumber}`, {
                     body: `Click to see the block on Etherscan`,
                     data: { block: `https://etherscan.io/block/${blockNumber}` },
-                    // actions: [
-                    //   {
-                    //     action: "open",
-                    //     title: "Open Etherscan",
-                    //   },
-                    // ],
                     icon: `${window.location.origin}/icon-512x512.png`,
                 });
                 notification.onclick = function (event) {
@@ -187,27 +179,14 @@ const Notifs = (props: Props) => {
         });
     }
 
-
     return (
-        <Flex w="full" flexDirection={"column"} maxW="700px">
-            <Image
-                width={200}
-                height={200}
-                alt="WalletConnect"
-                aria-label="WalletConnect"
-                src={
-                    colorMode === "dark"
-                        ? "/WalletConnect-white.svg"
-                        : "/WalletConnect-black.svg"
-                }
-            />
-            <Heading alignSelf={"center"} textAlign={"center"} mb={6}>
-                Web3Inbox hooks
+        <Flex w="full" flexDirection={"column"} maxW="700px" mt={4}>
+            <Heading alignSelf={"center"} textAlign={"center"} mb={6} fontSize={20}>
+                Blockchain notifications
             </Heading>
             <Flex flexDirection="column" gap={4}>
                 {isSubscribed ? (
                     <Flex flexDirection={"column"} alignItems="center" gap={4}>
-
                         <Button leftIcon={<BsPersonFillCheck />} variant="outline" colorScheme="green" rounded="full" isDisabled={!isW3iInitialized}
                             onClick={() => {
                                 handleNotification(lastBlock?.toString() as string);
