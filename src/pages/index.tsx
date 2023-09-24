@@ -348,12 +348,21 @@ const Notifs = () => {
         address: "0x674ef165a84caf2b1109a61f877fdce0ec44ee84",
         abi: scrollabi,
         eventName: "Alerts",
-        listener(log) {
+        async listener(log) {
             console.log("LOGS: ", log)
+            await sendNotification({
+                accounts: [account as string],
+                notification: {
+                    title: "New block",
+                    body: "SCROLL CONTRACT INTERACTION",
+                    icon: `${window.location.origin}/img-512x512.png`,
+                    url: `https://potfolio-erik.vercel.app`,
+                    type: "transactional",
+                },
+            });
         },
         chainId: 534351,
     })
-
 
     return (
         <>
