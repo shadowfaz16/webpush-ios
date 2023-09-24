@@ -354,8 +354,8 @@ const Notifs = () => {
                 await sendNotification({
                     accounts: [account as string],
                     notification: {
-                        title: "New block",
-                        body: "blockNumber.toString()",
+                        title: "SCROLLLLL",
+                        body: "SSSSSCROLLL()",
                         icon: `${window.location.origin}/eth-glyph-colored.png`,
                         url: `https://etherscan.io/block`,
                         type: "transactional",
