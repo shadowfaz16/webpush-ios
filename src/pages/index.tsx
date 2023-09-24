@@ -344,24 +344,6 @@ const Notifs = () => {
                 <Flex flexDirection="column" gap={4} position={"fixed"}>
                     {isSubscribed ? (
                         <Flex flexDirection={"column"} alignItems="center" gap={4}>
-                            <Button leftIcon={<BsPersonFillCheck />} variant="outline" colorScheme="green" rounded="full" isDisabled={!isW3iInitialized}
-                                onClick={() => {
-                                    handleNotification(lastBlock?.toString() as string);
-                                }
-                                }
-                            >Request notifications</Button>
-                            <Button
-                                leftIcon={<BsSendFill />}
-                                variant="outline"
-                                onClick={handleTestNotification}
-                                isDisabled={!isW3iInitialized}
-                                colorScheme="purple"
-                                rounded="full"
-                                isLoading={isSending}
-                                loadingText="Sending..."
-                            >
-                                Send test notification
-                            </Button>
                             <Button
                                 leftIcon={isBlockNotificationEnabled ? <FaPause /> : <FaPlay />}
                                 variant="outline"
@@ -399,7 +381,7 @@ const Notifs = () => {
                         >
                             <Button
                                 leftIcon={<FaBell />}
-                                onClick={subscribe}
+                                onClick={handleSubscribe}
                                 colorScheme="cyan"
                                 rounded="full"
                                 variant="outline"
@@ -416,7 +398,7 @@ const Notifs = () => {
 
                     {isSubscribed && (
                         <div className="absolute top-80 left-20 justify-center items-center w-full">
-                            <div className="h-44 border-2 rounded-lg shadow-sm border-gray-400 w-1/3 relative overflow-y-scroll ">
+                            <div className="h-44 border-2 rounded-lg shadow-sm border-gray-400 md:w-1/2 relative overflow-y-scroll ">
                                 <Accordion defaultIndex={[1]} allowToggle mt={10} rounded="xl">
                                     <Messages />
                                 </Accordion>

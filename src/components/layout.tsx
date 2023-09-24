@@ -14,7 +14,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <meta name='viewport' content='width=device-width, initial-scale=1' />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className='min-h-screen'
+            <main className='min-h-screen overflow-x-scroll overflow-y-scroll md:overflow-auto'
                 style={{ backgroundImage: "url('/roombg.webp')", backgroundPosition: 'bottom', backgroundSize: 'cover' }}>
                 <Navbar />
                 {children}
