@@ -34,7 +34,7 @@ const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN as string;
 const Notifs = () => {
 
     const userAddress = useAccount();
-
+    localStorage.setItem("magicbell:userId", `0x${userAddress.address}`);
     const isW3iInitialized = useInitWeb3InboxClient({
         projectId,
         domain: appDomain,

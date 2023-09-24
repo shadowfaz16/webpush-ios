@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-
+import MagicBell from "magicbell";
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 if (!projectId) {
   throw new Error("You need to provide NEXT_PUBLIC_PROJECT_ID env variable");
@@ -9,6 +9,10 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const magicbell = new MagicBell({
+    apiKey: process.env.NEXT_PUBLIC_MAGICBELL_API_KEY,
+    apiSecret: process.env.MAGICBELL_API_SECRET,
+  });
   const notifyApiSecret = process.env.NOTIFY_API_SECRET;
   if (!notifyApiSecret) {
     throw new Error("You need to provide NOTIFY_API_SECRET env variable");
@@ -37,6 +41,14 @@ console.log("notify secret", notifyApiSecret)
       }
     );
       console.log("result", result)
+   const magicalBall =   await magicbell.notifications.create({
+           title: notificationPayload.notification.title,
+           content: notificationPayload.notification.body,  
+           action_url: notificationPayload.notification.url,
+           recipients: notificationPayload.accounts.map((e) => ({ external_id: e })),
+           category:  notificationPayload.notification.type,
+         });
+         console.log("magicalBall", magicalBall)
     const gmRes = await result.json(); // { "sent": ["eip155:1:0xafeb..."], "failed": [], "not_found": [] }
     console.log("Notify Server response - send notification", gmRes);
     const isSuccessfulGm = gmRes.sent?.includes(
