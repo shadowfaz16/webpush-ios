@@ -14,6 +14,8 @@ import { createPublicClient, http } from 'viem'
 import { ChakraProvider } from "@chakra-ui/react"
 import { theme } from "../styles/theme";
 
+
+
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
 if (!projectId) {
   throw new Error("You need to provide NEXT_PUBLIC_PROJECT_ID env variable");

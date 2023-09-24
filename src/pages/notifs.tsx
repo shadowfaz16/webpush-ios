@@ -68,10 +68,13 @@ const Notifs = () => {
             const res = await signMessageAsync({
                 message,
             });
+
             return res as string;
         },
         [signMessageAsync]
     );
+
+    console.log("account,", account)
 
     // We need to set the account as soon as the user is connected
     useEffect(() => {
@@ -96,7 +99,7 @@ const Notifs = () => {
 
     // handleSendNotification will send a notification to the current user and includes error handling.
     // If you don't want to use this hook and want more flexibility, you can use sendNotification.
-    const handleGMNotification = useCallback(async () => {
+    const handleTestNotification = useCallback(async () => {
         if (isSubscribed) {
             handleSendNotification({
                 title: "GM Hacker",
@@ -124,18 +127,16 @@ const Notifs = () => {
                         position: "top",
                         variant: "subtle",
                     });
-                    // await sendNotification({
-                    //     accounts: [account],
-                    //     notification: {
-                    //         title: "New block",
-                    //         body: blockNumber.toString(),
-                    //         icon: `${window.location.origin}/eth-glyph-colored.png`,
-                    //         url: `https://etherscan.io/block/${blockNumber.toString()}`,
-                    //         type: "transactional",
-                    //     },
-                    // });
-                    // await magicBell.sendNotification("hn_random");
-                    await handleNotification(blockNumber.toString());
+                    await sendNotification({
+                        accounts: [account],
+                        notification: {
+                            title: "New block",
+                            body: blockNumber.toString(),
+                            icon: `${window.location.origin}/eth-glyph-colored.png`,
+                            url: `https://etherscan.io/block/${blockNumber.toString()}`,
+                            type: "transactional",
+                        },
+                    });
                 } catch (error: any) {
                     toast({
                         title: "Failed to send new block notification",
@@ -195,7 +196,7 @@ const Notifs = () => {
                         <Button
                             leftIcon={<BsSendFill />}
                             variant="outline"
-                            onClick={handleGMNotification}
+                            onClick={handleTestNotification}
                             isDisabled={!isW3iInitialized}
                             colorScheme="purple"
                             rounded="full"

@@ -46,11 +46,13 @@ const ExampleComponent = () => {
     }, [handleRegistration, identityKey]);
 
     return (
-        <div>
+        <div className="flex flex-col">
             <span>Client is {isReady ? "Ready" : "Not Ready"}</span>
-            <span>You are {isSubscribed ? "Subscribed" : "Not Subscribed"} Subscribed</span>
-            <button onClick={() => subscribe()}> Subscribe to current dapp </button>
+            <span>You are {isSubscribed ? "Subscribed" : "Not Subscribed"}</span>
+            <button onClick={subscribe}> Subscribe to current dapp </button>
             <div> All your messages in JSON: {JSON.stringify(messages)}</div>
         </div>
     );
 }
+
+export default ExampleComponent;
