@@ -405,7 +405,7 @@ const Notifs = () => {
                     )}
 
                     {isSubscribed && (
-                        <div className="absolute top-80 left-20 justify-center items-center w-full">
+                        <div className="md:absolute top-80 left-20 justify-center items-center w-full">
                             <div className="h-44 border-2 rounded-lg shadow-sm border-gray-400 md:w-1/2 relative overflow-y-scroll ">
                                 <Accordion defaultIndex={[1]} allowToggle mt={10} rounded="xl">
                                     <Messages />
@@ -415,7 +415,7 @@ const Notifs = () => {
                     )}
                 </Flex>
             </Flex>
-            <Flex className="absolute right-96 bottom-56 hover:cursor-pointer hover:scale-105 transition-all ease-out">
+            <Flex className="absolute left-4 md:right-96 md:bottom-56 hover:cursor-pointer hover:scale-105 transition-all ease-out">
                 <Tooltip
                     label={
                         !Boolean(address)
@@ -435,9 +435,8 @@ const Notifs = () => {
                     flexDirection="row"
                     justifyContent="center"
                     alignItems="center"
-                    position={"fixed"}
+                    className="fixed w-full"
                     bottom={0}
-                    left={300}
                     mt={10}
                     mb={10}
                 >
