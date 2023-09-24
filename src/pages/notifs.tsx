@@ -108,7 +108,6 @@ const Notifs = () => {
                 url: window.location.origin,
                 type: "promotional",
             });
-            await handleNotification("GM Hacker");
         }
     }, [handleSendNotification, isSubscribed]);
 
