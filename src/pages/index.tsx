@@ -318,19 +318,29 @@ const Notifs = () => {
 
 
     const handleSubscribe = async () => {
-        subscribe();
         try {
-            setState({ status: "busy" })
-            await subscriptionManager.subscribe(
-                clientSettings.getState().userExternalId as string, // TODO: fix typing here
-                subscribeOptions
-            )
-            setState({ status: "success" })
+            subscribe().catch((error) => {
+                console.error("Error in subscribe: ", error);
+                setState((prevState) => ({ ...prevState, status: "error", error: error.message }));
+            });
+
+            const userExternalId = clientSettings.getState().userExternalId;
+
+            if (typeof userExternalId === 'string') {
+                await subscriptionManager.subscribe(userExternalId, subscribeOptions)
+                    .catch((error) => {
+                        console.error("Error in subscriptionManager.subscribe: ", error);
+                        setState((prevState) => ({ ...prevState, status: "error", error: error.message }));
+                    });
+
+                setState((prevState) => ({ ...prevState, status: "success" }));
+            } else {
+                throw new Error("userExternalId is not a string");
+            }
         } catch (error: any) {
-            setState({ status: "error", error: error.message })
+            setState((prevState) => ({ ...prevState, status: "error", error: error.message }));
         }
     }
-
     return (
         <>
             <Flex w="full" flexDirection={"column"} maxW="700px" mt={4}>
