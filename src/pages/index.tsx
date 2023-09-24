@@ -7,6 +7,7 @@ import {
     useW3iAccount,
 } from "@web3inbox/widget-react";
 import "@web3inbox/widget-react/dist/compiled.css";
+import scrollabi from "../utils/scrollabi.json"
 
 import { usePublicClient, useSignMessage } from "wagmi";
 import { FaBell, FaBellSlash, FaPause, FaPlay } from "react-icons/fa";
@@ -24,7 +25,7 @@ import Navbar from "@/components/core/Navbar";
 import Layout from "@/components/layout";
 import magicBell from "../services/magicBell"
 
-import { useContractRead, useBalance, useAccount } from "wagmi";
+import { useContractRead, useContractEvent, useBalance, useAccount } from "wagmi";
 
 import { AnimatePresence, motion } from "framer-motion";
 import subscriptionManager from "@/services/subscriptionManager";
@@ -342,6 +343,18 @@ const Notifs = () => {
             setState((prevState) => ({ ...prevState, status: "error", error: error.message }));
         }
     }
+
+    useContractEvent({
+        address: "0x674ef165a84caf2b1109a61f877fdce0ec44ee84",
+        abi: scrollabi,
+        eventName: "Alerts",
+        listener(log) {
+            console.log("LOGS: ", log)
+        },
+        chainId: 534351,
+    })
+
+
     return (
         <>
             <Flex w="full" flexDirection={"column"} maxW="700px" mt={4}>

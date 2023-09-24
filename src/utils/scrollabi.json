@@ -1,0 +1,49 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          { "internalType": "string", "name": "key", "type": "string" },
+          { "internalType": "string", "name": "value", "type": "string" }
+        ],
+        "indexed": false,
+        "internalType": "struct ImmutableAlerts.KeyValue[]",
+        "name": "keyValues",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "Alerts",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          { "internalType": "string", "name": "key", "type": "string" },
+          { "internalType": "string", "name": "value", "type": "string" }
+        ],
+        "internalType": "struct ImmutableAlerts.KeyValue[]",
+        "name": "keyValues",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "Immute",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "id",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
